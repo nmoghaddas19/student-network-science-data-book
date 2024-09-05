@@ -38,7 +38,7 @@ os.system('git merge upstream/main')
 for wildcard in fname_wildcards:
     print(wildcard)
     keepers = []
-    fnames_from_most_recent = sorted([f for f in glob.glob(wildcard[1:])], reverse=True)
+    fnames_from_most_recent = sorted([f for f in glob.glob(wildcard[1:])])
     print(fnames_from_most_recent)
     for idx in range(1, len(fnames_from_most_recent)):
         os.system('cmp --silent -- {} {} > mod.txt'.format(
@@ -52,3 +52,9 @@ for wildcard in fname_wildcards:
             print(len(bytes_diff))
         if len(bytes_diff) == 0:
             os.system('rm {}'.format(fnames_from_most_recent[idx]))
+        
+                  
+        
+    
+    
+
