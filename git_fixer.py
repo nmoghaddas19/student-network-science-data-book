@@ -1,6 +1,7 @@
 import os
 import time
 import glob
+import sys
 
 os.system('git fetch upstream && git diff main upstream/main > diff.diff')
 # check for differences between upstream (Alyssa's main repo) and your own forked version
@@ -23,6 +24,9 @@ with open("diff.diff", 'r') as f:
 fnames_to_ignore = []
 fnames_to_move = []
 for b in blocks:
+    if len(b[0]) < 12:
+        print('no diffs exist - try committing changes if changes are present!')
+        sys.exit()
     fname = b[0][12:].split()[0]
     if b[1].startswith('new file mode '):
         fnames_to_ignore.append(fname)
