@@ -1,4 +1,4 @@
-import os
+mport os
 import time
 import glob
 import sys
@@ -18,8 +18,18 @@ check_upstream_remote()
 # Fetch the latest updates from the upstream repository
 os.system('git fetch upstream')
 
+# Function to check if a file exists in the upstream repository
+def file_exists_in_upstream(file_path):
+    result = os.system(f'git ls-tree upstream/main -- {file_path} > /dev/null 2>&1')
+    return result == 0  # Return True if the file exists, False if it doesn't
+
 # Function to compare a local file with its upstream version
 def compare_with_upstream(file_path):
+    # First, check if the file exists in the upstream repository
+    if not file_exists_in_upstream(file_path):
+        print(f"File {file_path} does not exist in upstream. Skipping.")
+        return None  # Return None to indicate no comparison needed
+    
     # Create a temporary copy of the upstream version
     temp_file = "/tmp/{}".format(os.path.basename(file_path))
     os.system('git show upstream/main:{} > {}'.format(file_path, temp_file))
@@ -45,7 +55,8 @@ with open('tracked_files.txt', 'r') as f:
         file_path = file_path.strip()
         
         # Compare each file with its upstream version
-        if compare_with_upstream(file_path) != 0:
+        result = compare_with_upstream(file_path)
+        if result is not None and result != 0:
             modified_files.append(file_path)
 
 # Create copies of modified files with a "_MODIFIED_" suffix
