@@ -71,7 +71,7 @@ with open('tracked_files.txt', 'r') as f:
         # Also take command line arguments for additional ignore patterns
         # Usage: python3 git_fixer2.py --ignore="some_file_name,some_directory_name/"
         if args.ignore:
-            additional_ignore_patterns = args.ignore.split(',')
+            additional_ignore_patterns = [i.strip() for i in args.ignore.split(',')]
             ignore_patterns.extend(additional_ignore_patterns)
         
         if all(pattern not in file_path for pattern in ignore_patterns):
