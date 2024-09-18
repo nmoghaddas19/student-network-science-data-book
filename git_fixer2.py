@@ -3,6 +3,14 @@ import time
 import glob
 import sys
 import shutil
+import argparse
+
+# Takes command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--ignore', help="File path patterns to ignore. Takes comma delimited strings such as \"assignment/,somefileprefix\".")
+
+args = parser.parse_args()
+
 
 # Function to check if 'upstream' remote is set up
 def check_upstream_remote():
@@ -55,9 +63,17 @@ with open('tracked_files.txt', 'r') as f:
     for file_path in f.readlines():
         file_path = file_path.strip()
 
-        # Ignore files that has already been copied with suffix MODIFIED
-        # Also ignore assignment directory
+        # Ignore
+        # - files that has already been copied with suffix MODIFIED 
+        # - files in assignments directory
         ignore_patterns = ['MODIFIED', 'assignments/',]
+
+        # Also take command line arguments for additional ignore patterns
+        # Usage: python3 git_fixer2.py --ignore="some_file_name,some_directory_name/"
+        if args.ignore:
+            additional_ignore_patterns = args.ignore.split(',')
+            ignore_patterns.extend(additional_ignore_patterns)
+        
         if all(pattern not in file_path for pattern in ignore_patterns):
             # Compare each file with its upstream version
             result = compare_with_upstream(file_path)
