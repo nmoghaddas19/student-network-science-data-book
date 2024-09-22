@@ -109,3 +109,11 @@ for modified_file in modified_files:
         if os.system('cmp --silent "{}" "{}"'.format(matching_files[0], matching_files[idx])) == 0:
             os.remove(matching_files[idx])
             print("Removed duplicate modified file: {}".format(matching_files[idx]))
+
+os.system("git ls-files --others --exclude-standard > commit_us.txt")
+
+with open("commit_us.txt", 'r') as f:
+    print("don't forget to commit the following: \n")
+    for line in f.readlines():
+        print(line + '\n')
+        
