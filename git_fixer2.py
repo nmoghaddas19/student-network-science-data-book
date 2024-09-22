@@ -72,11 +72,6 @@ with open('tracked_files.txt', 'r') as f:
         # - files in assignments directory
         ignore_patterns = ['MODIFIED', 'assignments/',]
         
-        if any(file_path in glob.glob(wildcard) for wildcard in GIT_FIXER_REMOVE):
-            to_remove.append(file_path)
-        
-        elif any(file_path in glob.glob(wildcard) for wildcard in GIT_FIXER_IGNORE):
-            to_ignore.append(file_path)
         # Also take command line arguments for additional ignore patterns
         # Usage: python3 git_fixer2.py --ignore="some_file_name,some_directory_name/"
         
