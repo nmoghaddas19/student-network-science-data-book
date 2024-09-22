@@ -6,7 +6,7 @@ import shutil
 import argparse
 import yaml
 
-with open("config_git_fixer.yaml") as stream:
+with open("config_git_fixer.yml") as stream:
     config = yaml.safe_load(stream)
 
 GIT_FIXER_REMOVE = config['git_fixer_remove']
