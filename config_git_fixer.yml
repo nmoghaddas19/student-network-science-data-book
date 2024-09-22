@@ -1,0 +1,14 @@
+git_fixer_remove:
+  - class_02_networkx1_MODIFIED_1726159233_MODIFIED_1727009901.ipynb
+  - git_fixer2_MODIFIED*.py
+  - intro_MODIFIED_1727009904.md
+  - _MODIFIED_1726685766.gitignore
+  - requirements_MODIFIED_1727009904.txt
+  - class_02_networkx1_MODIFIED_1726685766.ipynb
+git_fixer_ignore:
+  - diff*.diff
+  - class_*_MODIFIED*.ipynb
+  - tracked_files*.txt
+  - mod*.txt
+  - assignments/*
+  - "*_MODIFIED_*"

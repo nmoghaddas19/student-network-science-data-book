@@ -4,12 +4,13 @@ import glob
 import sys
 import shutil
 import argparse
+import yaml
 
-# Takes command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('--ignore', help="File path patterns to ignore. Takes comma delimited strings such as \"assignment/,somefileprefix\".")
+with open("config_git_fixer.yaml") as stream:
+    config = yaml.safe_load(stream)
 
-args = parser.parse_args()
+GIT_FIXER_REMOVE = config['git_fixer_remove']
+GIT_FIXER_IGNORE = config['git_fixer_ignore']
 
 
 # Function to check if 'upstream' remote is set up
@@ -19,6 +20,7 @@ def check_upstream_remote():
         print("The 'upstream' remote is not set up. Please run the following command to set it up:")
         print("git remote add upstream <upstream-repository-url>")
         sys.exit(1)
+
 
 # Check if the upstream remote is set up
 check_upstream_remote()
@@ -59,6 +61,8 @@ def revert_to_upstream(file_path):
 modified_files = []
 os.system('git ls-tree -r main --name-only > tracked_files.txt')
 
+to_remove = []
+to_ignore = []
 with open('tracked_files.txt', 'r') as f:
     for file_path in f.readlines():
         file_path = file_path.strip()
@@ -67,14 +71,16 @@ with open('tracked_files.txt', 'r') as f:
         # - files that has already been copied with suffix MODIFIED 
         # - files in assignments directory
         ignore_patterns = ['MODIFIED', 'assignments/',]
-
+        
+        if any(file_path in glob.glob(wildcard) for wildcard in GIT_FIXER_REMOVE):
+            to_remove.append(file_path)
+        
+        elif any(file_path in glob.glob(wildcard) for wildcard in GIT_FIXER_IGNORE):
+            to_ignore.append(file_path)
         # Also take command line arguments for additional ignore patterns
         # Usage: python3 git_fixer2.py --ignore="some_file_name,some_directory_name/"
-        if args.ignore:
-            additional_ignore_patterns = [i.strip() for i in args.ignore.split(',')]
-            ignore_patterns.extend(additional_ignore_patterns)
         
-        if all(pattern not in file_path for pattern in ignore_patterns):
+        elif all(pattern not in file_path for pattern in ignore_patterns):
             # Compare each file with its upstream version
             result = compare_with_upstream(file_path)
             if result is not None and result != 0:
@@ -92,6 +98,21 @@ for file_path in modified_files:
     
     # Revert the original file to the upstream version
     revert_to_upstream(file_path)
+
+for file_path in to_remove:
+    os.remove(file_path)
+
+gitattributes = set()
+with open('.gitattributes', 'r') as f:
+    for line in f.readlines():
+        gitattributes.add(line.strip())
+
+for file_path in to_ignore:
+    my_line = "{} merge=ours".format(file_path)
+    if my_line in gitattributes:
+        continue
+    else:
+        os.system('echo "{} merge=ours" >> .gitattributes'.format(file_path))
 
 # Now merge the upstream changes without affecting the original files
 os.system('git merge --no-commit upstream/main')
