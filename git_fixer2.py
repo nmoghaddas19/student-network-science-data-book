@@ -115,6 +115,7 @@ os.system("git ls-files --others --exclude-standard > commit_us.txt")
 with open("commit_us.txt", 'r') as f:
     print("don't forget to add/commit/push the following: \n")
     for line in f.readlines():
+        print(line)
         if line.strip() not in GIT_FIXER_IGNORE:
             print(line)
         
