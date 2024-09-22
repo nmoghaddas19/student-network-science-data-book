@@ -4,6 +4,7 @@ git_fixer_remove:
   - _MODIFIED_*.gitignore
   - requirements_MODIFIED_*.txt
 git_fixer_ignore:
+  - config_git_fixer.yml
   - diff*.diff
   - class_*_MODIFIED*.ipynb
   - tracked_files*.txt
