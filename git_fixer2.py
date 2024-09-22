@@ -75,7 +75,7 @@ with open('tracked_files.txt', 'r') as f:
         # Also take command line arguments for additional ignore patterns
         # Usage: python3 git_fixer2.py --ignore="some_file_name,some_directory_name/"
         
-        else:
+        if all(pattern not in file_path for pattern in ignore_patterns):
             # Compare each file with its upstream version
             result = compare_with_upstream(file_path)
             if result is not None and result != 0:
