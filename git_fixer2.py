@@ -94,23 +94,8 @@ for file_path in modified_files:
     # Revert the original file to the upstream version
     revert_to_upstream(file_path)
 
-print(to_remove)
-for file_path in to_remove:
-    os.remove(file_path)
-
-gitattributes = set()
-with open('.gitattributes', 'r') as f:
-    for line in f.readlines():
-        gitattributes.add(line.strip())
-
-print(to_ignore)
-for file_path in to_ignore:
-    my_line = "{} merge=ours".format(file_path)
-    if my_line in gitattributes:
-        continue
-    else:
-        os.system('echo "{} merge=ours" >> .gitattributes'.format(file_path))
-
+for wildcard in GIT_FIXER_REMOVE:
+    os.system('rm -f {}'.format(wildcard))
 # Now merge the upstream changes without affecting the original files
 os.system('git merge --no-commit upstream/main')
 
